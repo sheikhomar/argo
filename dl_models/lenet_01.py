@@ -1,6 +1,9 @@
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.layers import Flatten, MaxPooling2D, Conv2D
+from os import path
+
+MODEL_NAME = path.splitext(path.basename(__file__))[0]
 
 
 def get_model(dataset):

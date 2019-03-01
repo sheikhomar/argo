@@ -19,9 +19,7 @@ def import_module(model_name):
     if model_name not in MODELS:
         msg = 'Unknown algorithm "%s"!' % model_name
         raise ap.ArgumentTypeError(msg)
-    module = importlib.import_module(f'{MODELS_DIR}.{model_name}')
-    module.model_name = model_name
-    return module
+    return importlib.import_module(f'{MODELS_DIR}.{model_name}')
 
 
 def parse_args():
@@ -43,8 +41,8 @@ def save_architecture(model_name, model):
 def main():
     args = parse_args()
     module = args.model
-    model_name = module.model_name
-    print(f'Using model {model_name}...')
+    model_name = module.MODEL_NAME
+    print(f'Using model "{model_name}"...')
 
     model = module.get_model(dataset)
     model.summary()

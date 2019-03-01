@@ -1,40 +1,25 @@
 #!/usr/bin/env python
 
-import os
-import importlib
 import argparse as ap
 import data_helper as dataset
+import utils as utils
 
-from os import path
 from keras.callbacks import TensorBoard
-
-
-MODELS_DIR = 'dl_models'
-MODELS = [path.splitext(f)[0]
-          for f in os.listdir(MODELS_DIR)
-          if path.isfile(path.join(MODELS_DIR, f))]
-
-
-def import_module(model_name):
-    if model_name not in MODELS:
-        msg = 'Unknown algorithm "%s"!' % model_name
-        raise ap.ArgumentTypeError(msg)
-    return importlib.import_module(f'{MODELS_DIR}.{model_name}')
 
 
 def parse_args():
     parser = ap.ArgumentParser(
         description='Trains a deep learning model.')
     parser.add_argument('--model', '-m',
-                        type=import_module,
+                        type=utils.verify_and_import_model,
                         required=True,
-                        help='Supported models: %s' % ', '.join(MODELS))
+                        help='Supported models: %s' % ', '.join(utils.MODELS))
     return parser.parse_args()
 
 
 def save_architecture(model_name, model):
     model_json = model.to_json()
-    with open(f'./{MODELS_DIR}/{model_name}.json', 'w') as json_file:
+    with open(f'./{utils.MODELS_DIR}/{model_name}.json', 'w') as json_file:
         json_file.write(model_json)
 
 
@@ -56,7 +41,8 @@ def main():
               validation_data=(X_test, y_test), callbacks=[tb])
 
     print('Saving weights')
-    model.save_weights(f'./dl_weights/${model_name}.hdf5', overwrite=False)
+
+    model.save_weights(utils.get_weights_path(model_name), overwrite=False)
 
 
 if __name__ == '__main__':

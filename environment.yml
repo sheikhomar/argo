@@ -1,0 +1,11 @@
+name: argo
+channels:
+  - conda-forge
+  - anaconda
+dependencies:
+  - tensorflow-gpu
+  - keras-gpu
+  - bleach
+  - jupyterlab
+  - pillow
+  - matplotlib

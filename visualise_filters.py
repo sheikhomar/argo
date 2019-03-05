@@ -54,7 +54,7 @@ def get_image_shape(input_tensor):
     return width, height, channels
 
 
-def generate_filter_image(input_tensor, output_tensor, filter_index, epochs=20, step=1.0):
+def generate_filter_image(input_tensor, output_tensor, filter_index, epochs=40, step=0.5):
     """Attempt to generate the input image that maximises the activation for one particular filter.
 
     :param input_tensor: The input image tensor
@@ -152,13 +152,19 @@ def visualise_conv_layer(model, model_name, layer_index):
 
     processed_filters = []
     for filter_index in range(layer.filters):
-        print(f'Generating image for filter {filter_index}')
+
         img, loss_val = generate_filter_image(input_tensor, output_tensor, filter_index)
-        print(f'  Loss: {loss_val}')
         processed_filters.append(img)
 
     grid_path = f'./figures/{model_name}_{layer_name}_filters.png'
+    print(f'Saving visualisation {grid_path}')
     save_filter_grid(grid_path, processed_filters, image_shape)
+
+
+def visualise_model(model, model_name):
+    for i, layer in enumerate(model.layers):
+        if isinstance(layer, Conv2D):
+            visualise_conv_layer(model, model_name, i)
 
 
 def main():
@@ -177,9 +183,7 @@ def main():
     print(f'Loading weights from {weights_path}...')
     model.load_weights(weights_path)
 
-    for i, layer in enumerate(model.layers):
-        if isinstance(layer, Conv2D):
-            visualise_conv_layer(model, model_name, i)
+    visualise_model(model, model_name)
 
 
 if __name__ == '__main__':
